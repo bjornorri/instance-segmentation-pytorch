@@ -30,10 +30,10 @@ class Model(object):
         self.load_model_path = load_model_path
         self.usegpu = usegpu
 
-        assert self.dataset in ['CVPPP', ]
+        assert self.dataset in ['CVPPP', 'microfibers']
         assert self.model_name in ['ReSeg', 'StackedRecurrentHourglass']
 
-        if self.dataset == 'CVPPP':
+        if self.dataset == 'CVPPP' or self.dataset == 'microfibers':
             if self.model_name == 'ReSeg':
                 self.model = ReSeg(self.n_classes,
                                    self.use_instance_segmentation,

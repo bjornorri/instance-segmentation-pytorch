@@ -10,7 +10,7 @@ parser.add_argument('--dataset', type=str,
                     required=True)
 opt = parser.parse_args()
 
-assert opt.dataset in ['CVPPP', ]
+assert opt.dataset in ['CVPPP', 'microfibers']
 
 pred_dir = opt.pred_dir
 
@@ -66,6 +66,60 @@ if opt.dataset == 'CVPPP':
         dtype='str',
         delimiter=',')
     img_dir = '../data/raw/CVPPP/CVPPP2017_LSC_training/training/A1'
+
+    dics, sbds, fg_dices = [], [], []
+    for name in names:
+        if not os.path.isfile(
+                '{}/{}/{}-n_objects.npy'.format(pred_dir, name, name)):
+            continue
+
+        n_objects_gt = int(n_objects_gts[n_objects_gts[:, 0] == name.replace('_rgb', '')][0][1])
+        n_objects_pred = np.load(
+            '{}/{}/{}-n_objects.npy'.format(pred_dir, name, name))
+
+        ins_seg_gt = np.array(Image.open(
+            os.path.join(img_dir, name.replace('_rgb', '') + '_label.png')))
+        ins_seg_pred = np.array(Image.open(os.path.join(
+            pred_dir, name, name + '-ins_mask.png')))
+
+        fg_seg_gt = np.array(
+            Image.open(
+                os.path.join(
+                    img_dir,
+                    name.replace('_rgb', '') +
+                    '_fg.png')))
+        fg_seg_pred = np.array(Image.open(os.path.join(
+            pred_dir, name, name + '-fg_mask.png')))
+
+        fg_seg_gt = (fg_seg_gt == 1).astype('bool')
+        fg_seg_pred = (fg_seg_pred == 255).astype('bool')
+
+        sbd = calc_sbd(ins_seg_gt, ins_seg_pred)
+        sbds.append(sbd)
+
+        dic = calc_dic(n_objects_gt, n_objects_pred)
+        dics.append(dic)
+
+        fg_dice = calc_dice(fg_seg_gt, fg_seg_pred)
+        fg_dices.append(fg_dice)
+
+    mean_dic = np.mean(dics)
+    mean_sbd = np.mean(sbds)
+    mean_fg_dice = np.mean(fg_dices)
+
+    print 'MEAN SBD     : ', mean_sbd
+    print 'MEAN |DIC|   : ', mean_dic
+    print 'MEAN FG DICE : ', mean_fg_dice
+
+elif opt.dataset == 'microfibers':
+    names = np.loadtxt('../data/metadata/microfibers/validation_image_paths.txt',
+                       dtype='str', delimiter=',')
+    names = np.array([os.path.splitext(os.path.basename(n))[0] for n in names])
+    n_objects_gts = np.loadtxt(
+        '../data/metadata/microfibers/number_of_instances.txt',
+        dtype='str',
+        delimiter=',')
+    img_dir = '../data/raw/microfibers'
 
     dics, sbds, fg_dices = [], [], []
     for name in names:

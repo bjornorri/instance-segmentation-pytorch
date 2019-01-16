@@ -1,3 +1,6 @@
 from CVPPP import DataSettings as CVPPPDataSettings
 from CVPPP import ModelSettings as CVPPPModelSettings
 from CVPPP import TrainingSettings as CVPPPTrainingSettings
+from microfibers import DataSettings as MicrofibersDataSettings
+from microfibers import ModelSettings as MicrofibersModelSettings
+from microfibers import TrainingSettings as MicrofibersTrainingSettings

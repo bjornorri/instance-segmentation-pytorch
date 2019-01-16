@@ -19,7 +19,7 @@ parser.add_argument('--dataset', type=str,
                     required=True)
 opt = parser.parse_args()
 
-assert opt.dataset in ['CVPPP', ]
+assert opt.dataset in ['CVPPP', 'microfibers']
 
 images_list = np.loadtxt(opt.lst, dtype='str', delimiter=',')
 model_path = opt.model
@@ -48,6 +48,9 @@ from lib import Model, Prediction
 if opt.dataset == 'CVPPP':
     from settings import CVPPPModelSettings
     ms = CVPPPModelSettings()
+elif opt.dataset == 'microfibers':
+    from settings import MicrofibersModelSettings
+    ms = MicrofibersModelSettings()
 
 model = Model(opt.dataset, ms.MODEL_NAME, ms.N_CLASSES, ms.MAX_N_OBJECTS,
               use_instance_segmentation=ms.USE_INSTANCE_SEGMENTATION,

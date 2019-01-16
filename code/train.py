@@ -29,11 +29,14 @@ parser.add_argument('--dataset', type=str,
                     required=True)
 opt = parser.parse_args()
 
-assert opt.dataset in ['CVPPP', ]
+assert opt.dataset in ['CVPPP', 'microfibers']
 
 if opt.dataset == 'CVPPP':
     from settings import CVPPPTrainingSettings
     ts = CVPPPTrainingSettings()
+elif opt.dataset == 'microfibers':
+    from settings import MicrofibersTrainingSettings
+    ts = MicrofibersTrainingSettings()
 
 
 def generate_run_id():
